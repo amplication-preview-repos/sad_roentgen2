@@ -1,0 +1,44 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model LoginAttempt {
+  createdAt DateTime  @default(now())
+  id        String    @id @default(cuid())
+  success   Boolean?
+  timestamp DateTime?
+  updatedAt DateTime  @updatedAt
+  user      User?     @relation(fields: [userId], references: [id])
+  userId    String?
+}
+
+model Notification {
+  createdAt DateTime  @default(now())
+  id        String    @id @default(cuid())
+  sentAt    DateTime?
+  typeField String?
+  updatedAt DateTime  @updatedAt
+  user      User?     @relation(fields: [userId], references: [id])
+  userId    String?
+}
+
+model User {
+  blockUntil    DateTime?
+  createdAt     DateTime       @default(now())
+  email         String?        @unique
+  firstName     String?
+  id            String         @id @default(cuid())
+  isBlocked     Boolean?
+  lastName      String?
+  loginAttempts LoginAttempt[]
+  notifications Notification[]
+  password      String
+  roles         Json
+  updatedAt     DateTime       @updatedAt
+  username      String         @unique
+}
